@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset, Subset
@@ -79,6 +81,66 @@ def cifar10_loaders(
         train = Subset(train, train_idx.tolist())
         test = Subset(test, test_idx.tolist())
 
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
+    return train_loader, test_loader
+
+
+def _normalize(images: np.ndarray) -> np.ndarray:
+    """Apply CIFAR-10 channel normalization to a ``(n, 3, 32, 32)`` float array."""
+    mean = np.array(CIFAR10_MEAN, dtype=np.float32).reshape(1, 3, 1, 1)
+    std = np.array(CIFAR10_STD, dtype=np.float32).reshape(1, 3, 1, 1)
+    return (images - mean) / std
+
+
+class NpzImages(Dataset):
+    """A dataset backed by an in-memory CHW uint8 image array.
+
+    Images are scaled to ``[0, 1]`` and channel-normalized on load, matching the
+    torchvision transform used for the full dataset.
+    """
+
+    def __init__(self, images_uint8: np.ndarray, labels: np.ndarray) -> None:
+        imgs = images_uint8.astype(np.float32) / 255.0
+        self.images = _normalize(imgs)
+        self.labels = labels.astype(np.int64)
+
+    def __len__(self) -> int:
+        return len(self.images)
+
+    def __getitem__(self, idx: int):
+        return torch.from_numpy(self.images[idx]), int(self.labels[idx])
+
+
+def sample_loaders(
+    path: str | Path = "data/cifar10_sample.npz",
+    batch_size: int = 64,
+) -> tuple[DataLoader, DataLoader]:
+    """Load train and test loaders from a committed CIFAR-10 sample ``.npz``.
+
+    The sample file holds a few hundred CIFAR-10 images per split as CHW uint8
+    arrays under the keys ``x_train``, ``y_train``, ``x_test``, ``y_test``. It
+    lets the quickstart train and evaluate with no download.
+
+    Args:
+        path: Path to the ``.npz`` sample.
+        batch_size: Batch size for both loaders.
+
+    Returns:
+        A ``(train_loader, test_loader)`` tuple.
+
+    Raises:
+        FileNotFoundError: If the sample file is missing.
+    """
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(
+            f"sample not found: {p}. Generate it with "
+            "python scripts/make_sample.py after downloading CIFAR-10."
+        )
+    with np.load(p) as data:
+        train = NpzImages(data["x_train"], data["y_train"])
+        test = NpzImages(data["x_test"], data["y_test"])
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False)
     return train_loader, test_loader

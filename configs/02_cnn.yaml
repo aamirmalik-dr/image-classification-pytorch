@@ -1,0 +1,12 @@
+# Plain three-block CNN, no batch norm or dropout. The convolutional baseline.
+name: cnn
+model:
+  arch: cnn
+  batch_norm: false
+  dropout: 0.0
+train:
+  epochs: 10
+  lr: 0.001
+  weight_decay: 0.0
+  batch_size: 128
+  seed: 0

@@ -1,0 +1,12 @@
+# Ablation: batch normalization only, isolating its effect.
+name: batchnorm
+model:
+  arch: cnn
+  batch_norm: true
+  dropout: 0.0
+train:
+  epochs: 10
+  lr: 0.001
+  weight_decay: 0.0
+  batch_size: 128
+  seed: 0

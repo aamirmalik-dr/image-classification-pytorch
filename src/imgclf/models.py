@@ -130,7 +130,7 @@ class ResNetStyle(nn.Module):
 
 
 def build_model(name: str, num_classes: int = 10) -> nn.Module:
-    """Construct a model by name.
+    """Construct a model from one of the named presets.
 
     Args:
         name: One of ``mlp``, ``cnn``, ``cnn_bn_drop``, ``vgg``, ``resnet``.
@@ -149,3 +149,35 @@ def build_model(name: str, num_classes: int = 10) -> nn.Module:
     if name not in builders:
         raise ValueError(f"unknown model {name!r}; choose from {list(builders)}")
     return builders[name]()
+
+
+def build_from_arch(
+    arch: str,
+    num_classes: int = 10,
+    batch_norm: bool = False,
+    dropout: float = 0.0,
+) -> nn.Module:
+    """Construct a model from an architecture family plus regularization flags.
+
+    This is the config-driven entry point used by the benchmark. Unlike
+    :func:`build_model`, the ``batch_norm`` and ``dropout`` knobs are explicit,
+    which is what the regularization ablation varies on the small CNN.
+
+    Args:
+        arch: One of ``mlp``, ``cnn``, ``vgg``, ``resnet``.
+        num_classes: Number of output classes.
+        batch_norm: Enable batch normalization (only affects ``cnn``).
+        dropout: Dropout probability in the classifier head (only ``cnn``).
+
+    Raises:
+        ValueError: If ``arch`` is not recognized.
+    """
+    if arch == "mlp":
+        return MLP(num_classes)
+    if arch == "cnn":
+        return SimpleCNN(num_classes, batch_norm=batch_norm, dropout=dropout)
+    if arch == "vgg":
+        return VGGStyle(num_classes)
+    if arch == "resnet":
+        return ResNetStyle(num_classes)
+    raise ValueError(f"unknown arch {arch!r}; choose from ['mlp', 'cnn', 'vgg', 'resnet']")
