@@ -16,10 +16,17 @@ env/
 .coverage
 htmlcov/
 
-# Data and generated artifacts (fetched or produced locally, never committed)
+# Data: ignore everything under data/ except the README and the committed sample
 data/*
 !data/README.md
-results/
+!data/cifar10_sample.npz
+
+# Results: ignore the directory contents and the local smoke dir
+results/*
+results/_smoke/
+
+# Model checkpoints: per-run checkpoints stay local
+checkpoints/
 *.pt
 *.pth
 *.pth.tar
@@ -32,7 +39,17 @@ Thumbs.db
 # Claude Code
 .claude/
 
-# torchvision downloads anywhere
+# torchvision downloads anywhere (full CIFAR-10)
 **/data/cifar-10-batches-py/
 **/cifar-10-python.tar.gz
 notebooks/data/
+
+# Negations: the small artifacts we do commit (must come after the ignores above)
+!results/confusion_grid.png
+!results/roc.png
+!results/confusion_matrix.png
+!results/accuracy_curves.png
+!results/loss_curves.png
+!results/metrics.json
+!results/ablation.json
+!results/resnet_checkpoint.pt
