@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Testing / tooling
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# Data and generated artifacts (fetched or produced locally, never committed)
+data/*
+!data/README.md
+results/
+*.pt
+*.pth
+*.pth.tar
+*.ckpt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code
+.claude/
+
+# torchvision downloads anywhere
+**/data/cifar-10-batches-py/
+**/cifar-10-python.tar.gz
+notebooks/data/

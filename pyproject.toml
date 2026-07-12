@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imgclf"
+version = "0.1.0"
+description = "A CIFAR-10 architecture study in PyTorch: MLP, CNN, VGG-style, and ResNet-style with a regularization ablation"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Aamir Malik" }]
+keywords = ["pytorch", "cifar10", "image-classification", "cnn", "resnet"]
+dependencies = [
+    "torch>=2.0",
+    "torchvision>=0.15",
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "ruff>=0.1", "black>=23.0"]
+
+[project.urls]
+Repository = "https://github.com/aamirmalik-dr/image-classification-pytorch"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
