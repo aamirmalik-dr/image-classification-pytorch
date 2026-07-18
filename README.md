@@ -1,7 +1,5 @@
 # image-classification-pytorch
 
-*Origin: Originally developed for the Machine Learning for Knowledge Service course at KAIST (Spring 2019); refactored and open-sourced in July 2026.*
-
 An empirical study of image-classification architectures on CIFAR-10. Five
 configurations, a plain MLP, a small CNN, the same CNN with batch norm and
 dropout, a compact VGG-style stack, and a ResNet-style network with skip
@@ -168,3 +166,7 @@ Aamir Malik
 ## License
 
 MIT, see LICENSE.
+
+---
+
+*Refactored and engineered into this tested, reproducible project in July 2026, from work originally done for the Machine Learning for Knowledge Service course at KAIST (Spring 2019).*
